@@ -1,17 +1,24 @@
-document.getElementById('saludbt').addEventListener('click', async () => {
-  const res = await fetch('https://api.github.com/repos/mouredev/hello-python/commits?per_page=10');
-  const commits = await res.json();
+const owner = "mouredev";   // usuario
+const repo = "retos-programacion-2023"; // repositorio
 
-  commits.forEach((item, i) => {
-    const hash = item.sha.substring(0, 7).toUpperCase();
-    const autor = item.commit.author.name;
-    const mensaje = item.commit.message.split('\n')[0];
-    const fecha = new Date(item.commit.author.date).toLocaleString();
+const url = "https://api.github.com/repos/" + owner + "/" + repo + "/commits?per_page=10";
 
-    console.log(`Commit ${i + 1} | ${hash} | ${autor} | ${mensaje} | ${fecha}`);
+fetch(url)
+  .then(res => res.json())
+  .then(data => {
+    const lista = document.getElementById("lista");
 
-    const p = document.createElement('p');
-    p.textContent = `Commit ${i + 1} | ${hash} | ${autor} | ${mensaje} | ${fecha}`;
-    document.getElementById('commits-list').appendChild(p);
-  });
-});
+    data.forEach((commit, index) => {
+      const hash = commit.sha.substring(0, 6);
+      const autor = commit.commit.author.name;
+      const mensaje = commit.commit.message;
+      const fecha = new Date(commit.commit.author.date);
+
+      const fechaFormateada = fecha.toLocaleString();
+
+      const li = document.createElement("li");
+    li.textContent = "Commit " + (index + 1) + " | " + hash + " | " + autor + " | " + mensaje + " | " + fechaFormateada;    
+      lista.appendChild(li);
+    });
+  })
+  .catch(error => console.error("Error:", error));
